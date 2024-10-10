@@ -100,14 +100,22 @@
   cursor: pointer;
   transition: background-color 0.3s, transform 0.3s;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
 
-  &:hover {
-    background-color: #509792;
-    transform: translateY(-1px);
+.button:hover {
+  background-color: #509792;
+  transform: translateY(-1px);
+}
+
+@media (hover: none) {
+  .button:hover {
+    background-color: #71ccc0;
+    transform: none;
   }
 
-  &:active {
-    transform: translateY(1px);
+  .button:active {
+    background-color: #509792;
+    transform: translateY(-1px);
   }
 }
 
