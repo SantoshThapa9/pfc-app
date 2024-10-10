@@ -1,101 +1,226 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useEffect } from "react";
+import styles from "./hi.module.scss";
+import axios from "axios";
+import { evaluate } from "mathjs";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [num, setNum] = useState<number | undefined>(0);
+  const [name, setName] = useState("nothing");
+  const [move, setMove] = useState(0);
+  const [types, setTypes] = useState<string[]>(["none"]);
+  const [abilities, setAbilities] = useState<string[]>(["none"]);
+  const [height, setHeight] = useState(0);
+  const [weight, setWeight] = useState(0);
+  const [flavorText, setFlavorText] = useState("");
+  const [inputValue, setInputValue] = useState("0");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isFirstRender, setIsFirstRender] = useState(true);
+  const [spriteUrl, setSpriteUrl] = useState("");
+  const [loading, setLoading] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    if (!isFirstRender) {
+      const getData = async () => {
+        if (num === 0) {
+          setInputValue("0");
+          setErrorMessage("");
+          return;
+        }
+
+        setLoading(true);
+        try {
+          const res = await axios.get(
+            `https://pokeapi.co/api/v2/pokemon/${num}`
+          );
+          interface ability {
+            ability: {
+              name: string;
+            };
+          }
+          interface type {
+            type: {
+              name: string;
+            };
+          }
+          interface FlavorTextEntry {
+            flavor_text: string;
+            language: {
+              name: string;
+            };
+          }
+
+          setName(res.data.name);
+          setMove(res.data.moves.length);
+          setAbilities(
+            res.data.abilities.map((ability: ability) => ability.ability.name)
+          );
+          setTypes(res.data.types.map((type: type) => type.type.name));
+          setHeight(res.data.height);
+          setWeight(res.data.weight);
+          setSpriteUrl(res.data.sprites.front_default);
+          setErrorMessage("");
+
+          const speciesRes = await axios.get(res.data.species.url);
+          const flavorEntry = speciesRes.data.flavor_text_entries.find(
+            (entry: FlavorTextEntry) => entry.language.name === "en"
+          );
+
+          setFlavorText(flavorEntry.flavor_text);
+        } catch {
+          setErrorMessage("This number is not valid. Try another Pokémon!");
+          setNum(num);
+          setName("nothing");
+          setMove(0);
+          setTypes(["none"]);
+          setAbilities(["none"]);
+          setHeight(0);
+          setWeight(0);
+          setInputValue("hello world!!");
+          setFlavorText("");
+          setSpriteUrl("");
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      getData();
+    } else {
+      setIsFirstRender(false);
+    }
+  }, [num, isFirstRender]);
+
+  const handleButtonClick = (value: string) => {
+    if (inputValue === "0" && !isNaN(Number(value))) {
+      setInputValue(value);
+    } else {
+      setInputValue(inputValue + value);
+    }
+  };
+
+  const handleCalculate = () => {
+    try {
+      const result = evaluate(inputValue);
+      setNum(Math.floor(result));
+      setInputValue(result.toString());
+    } catch {
+      setErrorMessage("Invalid expression");
+    }
+  };
+
+  const resetStates = () => {
+    setErrorMessage("");
+    setNum(0);
+    setName("nothing");
+    setMove(0);
+    setTypes(["none"]);
+    setAbilities(["none"]);
+    setHeight(0);
+    setWeight(0);
+    setInputValue("0");
+    setFlavorText("");
+    setSpriteUrl("");
+  };
+
+  return (
+    <div className={styles.body}>
+      <h2 className={styles.heading}>Pokemon Finding Calculator</h2>
+      <h3>Warning: Do not use this calculator for your exams!</h3>
+      <h2 className={styles.error}>{errorMessage}</h2>
+
+      <div className={styles.calc}>
+        <div className={styles.state}>
+          <div className={styles.s1}>
+            {loading ? (
+              <strong>loading...</strong>
+            ) : (
+              <h1>
+                {num} is {name}
+              </h1>
+            )}
+            <hr />
+            <h1>Type: {types.join(", ")}</h1>
+            <hr />
+            <h1>Moves: {move}</h1>
+            <hr />
+
+            <h1>Height: {height * 10} cm tall</h1>
+            <hr />
+            <h1>Weight: {weight / 10} kg</h1>
+            <hr />
+            <h1>Ability: {abilities.join(", ")}</h1>
+            <hr />
+          </div>
+          <div className={styles.s2}>
+            {" "}
+            {spriteUrl && (
+              <img
+                src={spriteUrl}
+                loading="lazy"
+                alt={name}
+                className={styles.sprite}
+              />
+            )}
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+
+        <input
+          type="text"
+          value={inputValue}
+          readOnly
+          className={styles.display}
+        />
+        <div className={styles.buttonContainer}>
+          <input
+            type="button"
+            value="C"
+            onClick={resetStates}
+            className={styles.button}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
+          {Array.from({ length: 10 }, (_, i) => (
+            <input
+              key={i}
+              type="button"
+              value={i}
+              onClick={() => handleButtonClick(i.toString())}
+              className={styles.button}
+            />
+          ))}
+          {["+", "-", "*", "/"].map((operator) => (
+            <input
+              key={operator}
+              type="button"
+              value={operator}
+              onClick={() => handleButtonClick(operator)}
+              className={styles.button}
+            />
+          ))}
+          <input
+            type="button"
+            value="="
+            onClick={handleCalculate}
+            className={styles.button}
           />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        </div>
+      </div>
+      <h1 className={styles.flavorText}>{flavorText}</h1>
+
+      <div className={styles.footer}>
+        <p>
+          Created by{" "}
+          <a target="_blank" href="https://santosh-gamma.vercel.app/">
+            SANTOSH{" "}
+          </a>
+          &copy; {new Date().getFullYear()}
+        </p>
+        <p>
+          Powered by{" "}
+          <a target="_blank" href="https://pokeapi.co/">
+            pokeAPI
+          </a>
+        </p>
+      </div>
     </div>
   );
 }

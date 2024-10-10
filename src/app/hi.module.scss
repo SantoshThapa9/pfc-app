@@ -1,0 +1,151 @@
+@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap");
+
+.body {
+  margin: 0;
+  padding: 20px;
+  font-family: "Arial", sans-serif;
+  background-color: #282c34;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+  min-height: 101svh;
+
+  .heading {
+    margin-top: 20px;
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+    animation: fadeIn 1s ease-in;
+    color: transparent;
+    -webkit-text-stroke: 0.5px white;
+    font-family: "Oswald", sans-serif;
+  }
+  h3 {
+    color: rgb(190, 151, 67);
+    font-size: clamp(0.8rem, 3vw, 1.3rem);
+  }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .calc {
+    margin-top: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    animation: zoomIn 0.5s ease;
+    width: 600px;
+    @media (max-width: 767px) {
+      max-width: 90svw;
+    }
+  }
+  .error {
+    color: red;
+    position: absolute;
+  }
+  @keyframes zoomIn {
+    from {
+      transform: scale(0.8);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+
+  h1 {
+    font-size: clamp(1rem, 2vw, 1.1rem);
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    font-family: "Oswald", sans-serif;
+    transition: font-weight 0.2s ease-in-out;
+    user-select: none;
+
+    &:hover {
+      font-weight: 600;
+    }
+  }
+
+  .display {
+    margin-top: 10px;
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    font-size: 2rem;
+    text-align: right;
+    margin-bottom: 20px;
+    background-color: #86b9ad;
+    color: #282c34;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .buttonContainer {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+}
+.button {
+  border: none;
+  border-radius: 10px;
+  background-color: #71ccc0;
+  font-size: 2rem;
+  color: #282c34;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+
+  &:hover {
+    background-color: #509792;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+.state {
+  display: flex;
+  width: 100%;
+  padding: 10px;
+  height: 210px;
+  border-radius: 10px;
+  background-color: #86b9ad;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+.s1,
+.s2 {
+  flex: 1;
+}
+
+.sprite {
+  height: 100%;
+  width: 100%;
+}
+.flavorText {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  width: 90svw;
+}
+.footer {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  a {
+    color: rgb(119, 144, 255);
+    &:hover {
+      color: rgb(63, 114, 255);
+    }
+  }
+}
