@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import styles from "./hi.module.scss";
+import styles from "./pfc.module.scss";
 import axios from "axios";
 import { evaluate } from "mathjs";
 
@@ -212,7 +212,7 @@ export default function Home() {
           <a target="_blank" href="https://santosh-gamma.vercel.app/">
             SANTOSH{" "}
           </a>
-          &copy; {new Date().getFullYear()}
+          &copy; {new Date().getFullYear()}.
         </p>
         <p>
           Powered by{" "}
