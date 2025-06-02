@@ -2,6 +2,23 @@
   "name": "pfc",
   "version": "0.1.0",
   "private": true,
+  "description": "Created by Santosh Thapa, this Pokémon Finding Calculator helps you easily calculate encounter rates and probabilities to find your favorite Pokémon in any region.",
+  "author": "Santosh Thapa",
+  "homepage": "https://pfc-app-mauve.vercel.app/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SantoshThapa9/pfc-app"
+  },
+  "keywords": [
+    "Pokémon",
+    "calculator",
+    "Pokémon tools",
+    "encounter rate",
+    "shiny hunting",
+    "trainer utilities",
+    "Pokémon finding calculator",
+    "Santosh Thapa"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
